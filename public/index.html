@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="style.css" />
-		<title>Transit Dashboard</title>
+		<title>ELK Transit Dashboard</title>
 		<meta charset="UTF-8" />
 	</head>
 	<body>
@@ -97,8 +97,11 @@
 			const diff = Math.floor((arrival - now) / 1000);
 
 			const minutes = Math.floor(diff / 60);
-
-			return `${minutes} minutes`;
+			if (minutes <= 0) {
+				return 'Due';
+			} else {
+				return `${minutes} minutes`;
+			}
 		}
 
 	  </script>
