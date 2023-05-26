@@ -18,17 +18,18 @@
 		  .then(data => {
 			const dataContainer = document.getElementById('train-list');
 			data.ctatt.eta.forEach(eta => {
-			//   const routeName = route["@name"];
-
-			//   route.train.forEach(train => {
 				const staName = eta.staNm;
 				const destName = eta.destNm;
 				const route = eta.rt;
 				const arrT = eta.arrT;
+				const currTime = new Date();
+				const arrTime = new Date(arrT);
+				const timeDiff = Math.ceil((arrTime - currTime) / (1000 * 60));
 				const routeItem = document.createElement('li');
-				routeItem.textContent = `Station Name: ${staName}, Dest: ${destName}, Route: ${route}, Arrival Time: ${arrT}`;
+				routeItem.textContent = `Station Name: ${staName}, Dest: ${destName}, Arriving in: ${timeDiff}`;
+				routeItem.classList.add(`route-${route}`);
 				dataContainer.appendChild(routeItem);
-			//   })
+
 	
 	
 			});

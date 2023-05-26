@@ -6,3 +6,11 @@ body {
 	width: 50px;
 	height: 50px;
 }
+
+.route-Red {
+	color: red;
+}
+
+.route-Blue {
+	color: blue;
+}
