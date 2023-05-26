@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="style.css" />
+		<title>Transit Dashboard</title>
+		<meta charset="UTF-8" />
+	</head>
+	<body>
+		Hello
+		<h1>CTA Information</h1>
+		<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Chicago_Transit_Authority_Logo.svg" class="cta-logo"/>
+		<h2>Trains</h2>
+		<ul class="train-list" id="train-list"></ul>
+	</body>
+	<script>
+		fetch('/api')
+		  .then(response => response.json())
+		  .then(data => {
+			const dataContainer = document.getElementById('train-list');
+			data.ctatt.eta.forEach(eta => {
+			//   const routeName = route["@name"];
+
+			//   route.train.forEach(train => {
+				const staName = eta.staNm;
+				const destName = eta.destNm;
+				const route = eta.rt;
+				const arrT = eta.arrT;
+				const routeItem = document.createElement('li');
+				routeItem.textContent = `Station Name: ${staName}, Dest: ${destName}, Route: ${route}, Arrival Time: ${arrT}`;
+				dataContainer.appendChild(routeItem);
+			//   })
+	
+	
+			});
+		  })
+		  .catch(error => {
+			console.error('Error fetching API data:', error);
+		  });
+
+	  </script>
+</html>
