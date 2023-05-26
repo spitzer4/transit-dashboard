@@ -13,21 +13,24 @@
 			<thead>
 			  <tr>
 				<th>Route</th>
+				<th>Destination</th>
 				<th>Arrival Time</th>
 			  </tr>
 			</thead>
 			<tbody id="train-list"></tbody>
 		</table>
-		<!-- <ul class="train-list" id="train-list"></ul> -->
 	</body>
 	<script>
 		fetch('/api')
 		  .then(response => response.json())
 		  .then(data => {
 			const dataContainer = document.getElementById('train-list');
+			const trainsByStation = {};
+			
 			data.ctatt.eta.forEach(eta => {
 				const row = document.createElement('tr');
 				const routeCell = document.createElement('td');
+				const destCell = document.createElement('td');
 				const arrTCell = document.createElement('td');
 
 				const staName = eta.staNm;
@@ -38,22 +41,65 @@
 				const arrTime = new Date(arrT);
 				const timeDiff = Math.ceil((arrTime - currTime) / (1000 * 60));
 				const routeItem = document.createElement('li');
-				// routeItem.textContent = `Station Name: ${staName}, Dest: ${destName}, Arriving in: ${timeDiff}`;
-				row.classList.add(`route-${route}`);
-				routeCell.textContent = staName;
-				arrTCell.textContent = timeDiff;
-				row.appendChild(routeCell);
-				row.appendChild(arrTCell);
-				dataContainer.appendChild(row);
-				// dataContainer.appendChild(routeItem);
 
-	
-	
+				if (!trainsByStation[staName]) {
+					trainsByStation[staName] = {};
+				}
+
+				if (!trainsByStation[staName][route]) {
+					trainsByStation[staName][route] = [];
+				}
+
+				trainsByStation[staName][route].push({ destName, arrT });
+
+				row.classList.add(`route-${route}`);
 			});
+
+			for (const staName in trainsByStation) {
+				for (const route in trainsByStation[staName]) {
+					const trains = trainsByStation[staName][route];
+					const sortedTrains = trains.sort((a, b) => new Date(a.arrT) - new Date(b.arrT)).slice(0, 2);
+
+					sortedTrains.forEach(train => {
+						
+						const arrT = train.arrT;
+						const destName = train.destName;
+
+						const row = document.createElement('tr');
+						const routeCell = document.createElement('td');
+						const destCell = document.createElement('td');
+						const arrTCell = document.createElement('td');
+
+						routeCell.textContent = staName;
+						destCell.textContent = destName;
+						arrTCell.textContent = getTimeUntilArrival(arrT);
+
+						row.classList.add(`route-${route}`);
+
+						row.appendChild(routeCell);
+						row.appendChild(destCell);
+						row.appendChild(arrTCell);
+
+						dataContainer.appendChild(row);
+					});
+				}
+			}
+
+
 		  })
 		  .catch(error => {
 			console.error('Error fetching API data:', error);
 		  });
+
+		function getTimeUntilArrival(arrivalTime) {
+			const now = new Date();
+			const arrival = new Date(arrivalTime);
+			const diff = Math.floor((arrival - now) / 1000);
+
+			const minutes = Math.floor(diff / 60);
+
+			return `${minutes} minutes`;
+		}
 
 	  </script>
 </html>

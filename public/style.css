@@ -2,15 +2,30 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+	padding: 8px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+
 .cta-logo {
 	width: 50px;
 	height: 50px;
 }
 
 .route-Red {
-	color: red;
+	background-color: #c60c30;
+	color: white;
+	font-weight: bold;
 }
 
 .route-Blue {
-	color: blue;
+	background-color: #00a1de;
+	color: white;
+	font-weight: bold;
 }
