@@ -26,33 +26,44 @@
 		  .then(data => {
 			const dataContainer = document.getElementById('train-list');
 			const trainsByStation = {};
+
+			if (!data || !Array.isArray(data)) {
+				console.error('Invalid data received from server:', data);
+				return;
+			}
 			
-			data.ctatt.eta.forEach(eta => {
-				const row = document.createElement('tr');
-				const routeCell = document.createElement('td');
-				const destCell = document.createElement('td');
-				const arrTCell = document.createElement('td');
-
-				const staName = eta.staNm;
-				const destName = eta.destNm;
-				const route = eta.rt;
-				const arrT = eta.arrT;
-				const currTime = new Date();
-				const arrTime = new Date(arrT);
-				const timeDiff = Math.ceil((arrTime - currTime) / (1000 * 60));
-				const routeItem = document.createElement('li');
-
-				if (!trainsByStation[staName]) {
-					trainsByStation[staName] = {};
+			data.forEach(responseData => {
+				if (!responseData || !responseData.ctatt || !responseData.ctatt.eta || !Array.isArray(responseData.ctatt.eta)) {
+					console.error('Invalid response data format:', responseData);
+					return;
 				}
+				responseData.ctatt.eta.forEach(eta => {
+					const row = document.createElement('tr');
+					const routeCell = document.createElement('td');
+					const destCell = document.createElement('td');
+					const arrTCell = document.createElement('td');
 
-				if (!trainsByStation[staName][route]) {
-					trainsByStation[staName][route] = [];
-				}
+					const staName = eta.staNm;
+					const destName = eta.destNm;
+					const route = eta.rt;
+					const arrT = eta.arrT;
+					const currTime = new Date();
+					const arrTime = new Date(arrT);
+					const timeDiff = Math.ceil((arrTime - currTime) / (1000 * 60));
+					const routeItem = document.createElement('li');
 
-				trainsByStation[staName][route].push({ destName, arrT });
+					if (!trainsByStation[staName]) {
+						trainsByStation[staName] = {};
+					}
 
-				row.classList.add(`route-${route}`);
+					if (!trainsByStation[staName][route]) {
+						trainsByStation[staName][route] = [];
+					}
+
+					trainsByStation[staName][route].push({ destName, arrT });
+
+					row.classList.add(`route-${route}`);
+				});
 			});
 
 			for (const staName in trainsByStation) {

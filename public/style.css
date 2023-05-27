@@ -39,3 +39,21 @@ th, td {
 	color: white;
 	font-weight: bold;
 }
+
+.route-Org {
+	background-color: #f9461c;
+	color: white;
+	font-weight: bold;
+}
+
+.route-Brn {
+	background-color: #62361b;
+	color: white;
+	font-weight: bold;
+}
+
+.route-Pink {
+	background-color: #e27ea6;
+	color: white;
+	font-weight: bold;
+}
