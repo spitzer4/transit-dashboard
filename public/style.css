@@ -3,10 +3,14 @@ body {
 	background-image: url("https://media.gettyimages.com/id/175655525/photo/bison-range-tetons.jpg?s=612x612&w=gi&k=20&c=z9y0e8t1tLqDvLk895do21jqT0D_DEZsXKW35hP0IGo=");
 	background-repeat: no-repeat;
 	background-size:cover;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	margin: 0;
 }
 
 table {
-	width: 50%;
+	width: 100%;
 	border-collapse: collapse;
 }
 
@@ -25,8 +29,6 @@ th, td {
 	width: 100%;
 	height: 50px;
 }
-
-
 
 .route-Red {
 	background-color: #c60c30;
@@ -100,4 +102,11 @@ th, td {
 	100% {
 		opacity: 0;
 	}
+}
+
+#section-container {
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }

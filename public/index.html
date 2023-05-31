@@ -8,19 +8,45 @@
 	<body>
 		<h1>CTA Information</h1>
 		<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Chicago_Transit_Authority_Logo.svg" class="cta-logo"/>
-		<h2>Trains</h2>
-		<table id="train-table">
-			<thead>
-			  <tr>
-				<th>Station</th>
-				<th>Destination</th>
-				<th>Arrival Time</th>
-			  </tr>
-			</thead>
-			<tbody id="train-list"></tbody>
-		</table>
+		<div id="weather-section">
+			<h2>Weather</h2>
+			<div id="weather-info">
+			  <img id="weather-icon" src="" alt="Weather Icon" />
+			  <p id="weather-description"></p>
+			  <p id="temperature"></p>
+			</div>
+		  </div>
+		<div id="section-container">
+			<table id="train-table">
+				<thead>
+				<tr>
+					<th>Station</th>
+					<th>Destination</th>
+					<th>Arrival Time</th>
+				</tr>
+				</thead>
+				<tbody id="train-list"></tbody>
+			</table>
+		</div>
 	</body>
 	<script>
+		fetch('api/weather')
+			.then(response => response.json())
+			.then(data => {
+				const weatherIcon = document.getElementById('weather-icon');
+				const weatherDescription = document.getElementById('weather-description');
+				const temperature = document.getElementById('temperature');
+				const humidity = document.getElementById('humidity');
+
+				// Update HTML with weather information
+				weatherIcon.src = data.current.condition.icon;
+				weatherDescription.textContent = data.current.condition.text;
+				temperature.textContent = `Temperature: ${data.current.temp_f} °F`;
+			})
+			.catch(error => {
+				console.error('Error fetching weather data:', error);
+			});
+
 		fetch('/api')
 		  .then(response => response.json())
 		  .then(data => {
@@ -69,9 +95,9 @@
 
 				rowsToRemove.forEach(row => {
 					row.classList.add('fade-out');
-					setTimeout(() => {
-						dataContainer.removeChild(row);
-					}, 500);
+					// setTimeout(() => {
+					// 	dataContainer.removeChild(row);
+					// }, 500);
 				});
 
 				dataContainer.innerHTML = '';
@@ -97,7 +123,7 @@
 					}
 				});
 				currentIndex = (currentIndex + displayLimit) % keys.length;
-				setTimeout(displayNextTrains, 5000);
+				setTimeout(displayNextTrains, 10000);
 			};
 			displayNextTrains();
 		})
