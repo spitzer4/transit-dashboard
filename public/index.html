@@ -38,76 +38,61 @@
 					return;
 				}
 				responseData.ctatt.eta.forEach(eta => {
-					const row = document.createElement('tr');
-					const routeCell = document.createElement('td');
-					const destCell = document.createElement('td');
-					const arrTCell = document.createElement('td');
-
 					const staName = eta.staNm;
 					const destName = eta.destNm;
 					const route = eta.rt;
 					const arrT = eta.arrT;
 
-					// const key = `${staName}_${route}`;
 					const key = `${destName}_${route}`;
-
-
-					const currTime = new Date();
-					const arrTime = new Date(arrT);
-					const timeDiff = Math.ceil((arrTime - currTime) / (1000 * 60));
-					const routeItem = document.createElement('li');
-
 
 					if (!trainsByStation[key]) {
 						trainsByStation[key] = [];
 					}
 					
-					trainsByStation[key].push({ destName, arrT, staName })
-					row.classList.add(`route-${route}`);
+					trainsByStation[key].push({ staName, destName, arrT, route })
 				});
 			});
 
-			for (const key in trainsByStation) {
-					const trains = trainsByStation[key];
-					const sortedTrains = trains.sort((a, b) => new Date(a.arrT) - new Date(b.arrT)).slice(0, 2);
+			let currentIndex = 0;
+			const displayLimit = 5;
+			const displayNextTrains = () => {
+				const keys = Object.keys(trainsByStation);
+				const endIndex = currentIndex + displayLimit;
+				const trainsToShow = keys.slice(currentIndex, endIndex).map(key => trainsByStation[key]).flat().slice(0, displayLimit);
 
-					sortedTrains.forEach(train => {
-						const staName = train.staName;
-
-						// const staName = key.split('_')[0];
-						const destName = key.split('_')[0];
-						const route = key.split('_')[1];
-						const arrT = train.arrT;
-						// const staName = train.staName;
-						// const staName = key.split('_')[2];
-
-						// const destName = train.destName;
-
-						const row = document.createElement('tr');
-						const routeCell = document.createElement('td');
-						const destCell = document.createElement('td');
-						const arrTCell = document.createElement('td');
-
-						routeCell.textContent = staName;
-						destCell.textContent = destName;
-						arrTCell.textContent = getTimeUntilArrival(arrT);
-
-						row.classList.add(`route-${route}`);
-
-						row.appendChild(routeCell);
-						row.appendChild(destCell);
-						row.appendChild(arrTCell);
-
-						dataContainer.appendChild(row);
-					});
+				if (trainsToShow.length === 0) {
+					currentIndex = 0;
 				}
-			})
 
+				dataContainer.innerHTML = '';
 
-		//   })
-		  .catch(error => {
+				trainsToShow.slice(0, displayLimit).forEach(train => {
+					const row = document.createElement('tr');
+					const routeCell = document.createElement('td');
+					const destCell = document.createElement('td');
+					const arrTCell = document.createElement('td');
+
+					routeCell.textContent = train.staName;
+					destCell.textContent = train.destName;
+					arrTCell.textContent = getTimeUntilArrival(train.arrT);
+
+					row.classList.add(`route-${train.route}`);
+
+					row.appendChild(routeCell);
+					row.appendChild(destCell);
+					row.appendChild(arrTCell);
+
+					dataContainer.appendChild(row);
+				});
+				currentIndex = (currentIndex + displayLimit) % keys.length;
+				setTimeout(displayNextTrains, 5000);
+			};
+			displayNextTrains();
+		})
+	
+		.catch(error => {
 			console.error('Error fetching API data:', error);
-		  });
+		});
 
 		function getTimeUntilArrival(arrivalTime) {
 			const now = new Date();
