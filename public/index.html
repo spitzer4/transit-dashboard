@@ -64,25 +64,37 @@
 					currentIndex = 0;
 				}
 
+				const existingRows = Array.from(dataContainer.children);
+				const rowsToRemove = existingRows.filter(row => !trainsToShow.includes(row.train));
+
+				rowsToRemove.forEach(row => {
+					row.classList.add('fade-out');
+					setTimeout(() => {
+						dataContainer.removeChild(row);
+					}, 500);
+				});
+
 				dataContainer.innerHTML = '';
 
-				trainsToShow.slice(0, displayLimit).forEach(train => {
-					const row = document.createElement('tr');
-					const routeCell = document.createElement('td');
-					const destCell = document.createElement('td');
-					const arrTCell = document.createElement('td');
+				trainsToShow.forEach(train => {
+					if (!existingRows.some(row => row.train === train)) {
+						const row = document.createElement('tr');
+						const routeCell = document.createElement('td');
+						const destCell = document.createElement('td');
+						const arrTCell = document.createElement('td');
 
-					routeCell.textContent = train.staName;
-					destCell.textContent = train.destName;
-					arrTCell.textContent = getTimeUntilArrival(train.arrT);
+						routeCell.textContent = train.staName;
+						destCell.textContent = train.destName;
+						arrTCell.textContent = getTimeUntilArrival(train.arrT);
 
-					row.classList.add(`route-${train.route}`);
+						row.classList.add(`route-${train.route}`, `fade-in`);
 
-					row.appendChild(routeCell);
-					row.appendChild(destCell);
-					row.appendChild(arrTCell);
+						row.appendChild(routeCell);
+						row.appendChild(destCell);
+						row.appendChild(arrTCell);
 
-					dataContainer.appendChild(row);
+						dataContainer.appendChild(row);
+					}
 				});
 				currentIndex = (currentIndex + displayLimit) % keys.length;
 				setTimeout(displayNextTrains, 5000);
