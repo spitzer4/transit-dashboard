@@ -57,3 +57,21 @@ th, td {
 	color: white;
 	font-weight: bold;
 }
+
+.route-G {
+	background-color: #009b3a;
+	color: white;
+	font-weight: bold;
+}
+
+.route-P {
+	background-color: #522398;
+	color: white;
+	font-weight: bold;
+}
+
+.route-Y {
+	background-color: #f9e300;
+	color: white;
+	font-weight: bold;
+}

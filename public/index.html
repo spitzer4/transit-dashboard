@@ -12,7 +12,7 @@
 		<table id="train-table">
 			<thead>
 			  <tr>
-				<th>Route</th>
+				<th>Station</th>
 				<th>Destination</th>
 				<th>Arrival Time</th>
 			  </tr>
@@ -47,34 +47,41 @@
 					const destName = eta.destNm;
 					const route = eta.rt;
 					const arrT = eta.arrT;
+
+					// const key = `${staName}_${route}`;
+					const key = `${destName}_${route}`;
+
+
 					const currTime = new Date();
 					const arrTime = new Date(arrT);
 					const timeDiff = Math.ceil((arrTime - currTime) / (1000 * 60));
 					const routeItem = document.createElement('li');
 
-					if (!trainsByStation[staName]) {
-						trainsByStation[staName] = {};
+
+					if (!trainsByStation[key]) {
+						trainsByStation[key] = [];
 					}
-
-					if (!trainsByStation[staName][route]) {
-						trainsByStation[staName][route] = [];
-					}
-
-					trainsByStation[staName][route].push({ destName, arrT });
-
+					
+					trainsByStation[key].push({ destName, arrT, staName })
 					row.classList.add(`route-${route}`);
 				});
 			});
 
-			for (const staName in trainsByStation) {
-				for (const route in trainsByStation[staName]) {
-					const trains = trainsByStation[staName][route];
+			for (const key in trainsByStation) {
+					const trains = trainsByStation[key];
 					const sortedTrains = trains.sort((a, b) => new Date(a.arrT) - new Date(b.arrT)).slice(0, 2);
 
 					sortedTrains.forEach(train => {
-						
+						const staName = train.staName;
+
+						// const staName = key.split('_')[0];
+						const destName = key.split('_')[0];
+						const route = key.split('_')[1];
 						const arrT = train.arrT;
-						const destName = train.destName;
+						// const staName = train.staName;
+						// const staName = key.split('_')[2];
+
+						// const destName = train.destName;
 
 						const row = document.createElement('tr');
 						const routeCell = document.createElement('td');
@@ -94,10 +101,10 @@
 						dataContainer.appendChild(row);
 					});
 				}
-			}
+			})
 
 
-		  })
+		//   })
 		  .catch(error => {
 			console.error('Error fetching API data:', error);
 		  });
