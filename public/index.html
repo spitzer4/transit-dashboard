@@ -2,21 +2,32 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="style.css" />
-		<title>ELK Transit Dashboard</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<title>CTA Information Dashboard</title>
 		<meta charset="UTF-8" />
 	</head>
 	<body>
 		<h1>CTA Information</h1>
-		<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Chicago_Transit_Authority_Logo.svg" class="cta-logo"/>
-		<div id="weather-section">
+		<div id="weather-section" class="weather-section">
+			<i class="fa-regular fa-cloud cta-logo"></i>
 			<h2>Weather</h2>
 			<div id="weather-info">
-			  <img id="weather-icon" src="" alt="Weather Icon" />
-			  <p id="weather-description"></p>
-			  <p id="temperature"></p>
+			  <img id="weather-icon" src="" alt="Weather Icon" class="weather-img"/>
+			  <p id="weather-description" class="text"></p>
+			  <p id="temperature" class="text"></p>
 			</div>
-		  </div>
-		<div id="section-container">
+		</div>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<div class="train-section">
+			<br/>
+			<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Chicago_Transit_Authority_Logo.svg" class="cta-logo"/>
+			<h2>Trains</h2>
+		<!-- </div> -->
+		<!-- <div id="section-container"> -->
 			<table id="train-table">
 				<thead>
 				<tr>
@@ -27,6 +38,7 @@
 				</thead>
 				<tbody id="train-list"></tbody>
 			</table>
+			<br/>
 		</div>
 	</body>
 	<script>
@@ -41,7 +53,7 @@
 				// Update HTML with weather information
 				weatherIcon.src = data.current.condition.icon;
 				weatherDescription.textContent = data.current.condition.text;
-				temperature.textContent = `Temperature: ${data.current.temp_f} °F`;
+				temperature.textContent = `${data.current.temp_f} °F`;
 			})
 			.catch(error => {
 				console.error('Error fetching weather data:', error);

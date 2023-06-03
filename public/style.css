@@ -1,28 +1,36 @@
 body {
 	font-family: Arial, Helvetica, sans-serif;
-	background-image: url("https://media.gettyimages.com/id/175655525/photo/bison-range-tetons.jpg?s=612x612&w=gi&k=20&c=z9y0e8t1tLqDvLk895do21jqT0D_DEZsXKW35hP0IGo=");
-	background-repeat: no-repeat;
-	background-size:cover;
+	background-color: #5a5a5a;
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
 	margin: 0;
+	padding: 20px;
+}
+
+h1, h2, p {
+	color: white;
 }
 
 table {
-	width: 100%;
+	width: 1000px;
 	border-collapse: collapse;
+	margin: 20px;
 }
 
 th, td {
 	padding: 8px;
 	text-align: left;
 	border-bottom: 1px solid #ddd;
+	color: white;
 }
 
 .cta-logo {
 	width: 50px;
 	height: 50px;
+	float: left;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 .elk-logo {
@@ -109,4 +117,24 @@ th, td {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+
+.weather-img {
+	height: 100px;
+	width: 100px;
+	float: left;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.text {
+	font-size: 20px;
+}
+
+.weather-section {
+	background-color: black;
+}
+
+.train-section {
+	background-color: black;
 }
