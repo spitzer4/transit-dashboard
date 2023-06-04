@@ -42,10 +42,37 @@ The Transit Dashboard is a web application that provides real-time information a
 
 ## Configuration
 
-To run the application, you need to provide API keys for the Train API and the Weather API. Follow the steps below to configure the API keys:
+1. Create a new file in your project directory: In your project directory, create a new file and name it something like 'config.js'.
+2. Follow these steps to configure your API keys:
+    1. Train API: Obtain an API key from the Chicago Transit Authority (CTA) Train API. Visit their website and create an account.
+    2. Weather API: Obtain an API key from the weather API provider. Visit their website and create an account if required.
+3. Review the CTA Train API documentation and choose which map IDs you would like to include.
+4. Define your API keys: Inside the config.js file, define variables for each of your API keys. For example:
+```
+// config.js
+module.exports = {
+	trainAPIKey: 'YOUR_API_KEY',
+	mapIds: ['MAP_ID_1', 'MAP_ID_2', ...],
+	weatherAPIKey: 'YOUR_WEATHER_API_KEY'
+  };
 
-1. Train API: Obtain an API key from the Chicago Transit Authority (CTA) Train API. Visit their website and create an account if you haven't already. Once you have the API key, open the `server.js` file and replace `<YOUR_TRAIN_API_KEY>` with your actual API key.
-2. Weather API: Obtain an API key from the weather API provider. Visit their website and create an account if required. Once you have the API key, open the `server.js` file and replace `<YOUR_WEATHER_API_KEY>` with your actual API key.
+```
+Replace 'YOUR_API_KEY', 'YOUR_WEATHER_API_KEY', and 'MAP_ID_X' with your actual API keys and map IDs.
+
+5. Update your .gitignore file: Open your .gitignore file and add a line to exclude the config.js file. This ensures that the file is not tracked by version control systems like Git. If you don't have a .gitignore file, create one in the root of your project and add the following line:
+```
+config.js
+```
+Save the .gitignore file.
+
+6. Usage in your code: In your main code file or wherever you need to access the API keys, import the config.js file and use the variables defined in it. For example:
+```
+// main.js
+const config = require('./config'); 
+// Use the config.trainAPIKey, config.weatherAPIKey, and config.mapIds variables in your code
+// ...
+```
+Make sure to adjust the import path if your config.js file is located in a different directory.
 
 ## Usage
 
