@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+		<title>CTA Information Dashboard</title>
+		<meta charset="UTF-8" />
+	</head>
+	<body>
+		<h1>CTA Information</h1>
+		<div id="weather-section" class="weather-section">
+			<i class="fa fa-solid fa-cloud"></i>
+			<h2>Weather</h2>
+			<div id="weather-info">
+			  <img id="weather-icon" src="" alt="Weather Icon" class="weather-img"/>
+			  <p id="weather-description" class="text"></p>
+			  <p id="temperature" class="text"></p>
+			</div>
+		</div>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<div class="train-section">
+			<br/>
+			<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Chicago_Transit_Authority_Logo.svg" class="cta-logo"/>
+			<h2>Trains</h2>
+			<div id="station-container"></div>
+			<!-- <table id="train-table">
+				<thead>
+				<tr>
+					<th>Station</th>
+					<th>Destination</th>
+					<th>Arrival Time</th>
+				</tr>
+				</thead>
+				<tbody id="train-list"></tbody>
+			</table> -->
+			<br/>
+		</div>
+	</body>
+	<script>
+		fetch('api/weather')
+			.then(response => response.json())
+			.then(data => {
+				const weatherIcon = document.getElementById('weather-icon');
+				const weatherDescription = document.getElementById('weather-description');
+				const temperature = document.getElementById('temperature');
+				const humidity = document.getElementById('humidity');
+
+				// Update HTML with weather information
+				weatherIcon.src = data.current.condition.icon;
+				weatherDescription.textContent = data.current.condition.text;
+				temperature.textContent = `${data.current.temp_f} °F`;
+			})
+			.catch(error => {
+				console.error('Error fetching weather data:', error);
+			});
+
+		fetch('/api')
+		  .then(response => response.json())
+		  .then(data => {
+			const trainsByStation = {};
+			const stationContainer = document.getElementById('station-container');
+
+			if (!data || !Array.isArray(data)) {
+				console.error('Invalid data received from server:', data);
+				return;
+			}
+			
+			data.forEach(responseData => {
+				if (!responseData || !responseData.ctatt || !responseData.ctatt.eta || !Array.isArray(responseData.ctatt.eta)) {
+					console.error('Invalid response data format:', responseData);
+					return;
+				}
+				responseData.ctatt.eta.forEach(eta => {
+					const staName = eta.staNm;
+					const destName = eta.destNm;
+					const route = eta.rt;
+					const arrT = eta.arrT;
+
+					const key = `${route}_${destName}`;
+
+					if (!trainsByStation[staName]) {
+						trainsByStation[staName] = [];
+					}
+					
+					trainsByStation[staName].push({ staName, destName, arrT, route });
+					
+				});
+			});
+
+			const stationNames = Object.keys(trainsByStation);
+			let currentStationIndex = 0;
+
+			const displayTrainsByStation = () => {
+				const stationName = stationNames[currentStationIndex];
+				const stationTrains = trainsByStation[stationName];
+
+				const stationWrapper = document.createElement('div');
+				stationWrapper.classList.add('station-wrapper');
+
+				const stationHeader = document.createElement('h3');
+				stationHeader.textContent = stationName;
+
+				const stationTable = document.createElement('table');
+				stationTable.classList.add('train-table');
+
+				const tableHead = document.createElement('thead');
+				const tableHeadRow = document.createElement('tr');
+				const tableHeadStation = document.createElement('th');
+				tableHeadStation.textContent = 'Station';
+				const tableHeadDestination = document.createElement('th');
+				tableHeadDestination.textContent = 'Destination';
+				const tableHeadArrival = document.createElement('th');
+				tableHeadArrival.textContent = 'Arrival Time';
+
+				tableHeadRow.appendChild(tableHeadStation);
+				tableHeadRow.appendChild(tableHeadDestination);
+				tableHeadRow.appendChild(tableHeadArrival);
+				tableHead.appendChild(tableHeadRow);
+
+				const tableBody = document.createElement('tbody');
+
+				stationTrains.forEach(train => {
+					const tableRow = document.createElement('tr');
+					const stationCell = document.createElement('td');
+					stationCell.textContent = train.staName;
+					const destinationCell = document.createElement('td');
+					destinationCell.textContent = train.destName;
+					const arrivalCell = document.createElement('td');
+					arrivalCell.textContent = getTimeUntilArrival(train.arrT);
+
+					tableRow.appendChild(stationCell);
+					tableRow.appendChild(destinationCell);
+					tableRow.appendChild(arrivalCell);
+					tableRow.classList.add(`route-${train.route}`);
+					tableBody.appendChild(tableRow);
+				});
+
+				stationTable.appendChild(tableHead);
+				stationTable.appendChild(tableBody);
+				stationWrapper.appendChild(stationHeader);
+				stationWrapper.appendChild(stationTable);
+				stationContainer.innerHTML = '';
+				stationContainer.appendChild(stationWrapper);
+
+				currentStationIndex = (currentStationIndex + 1) % stationNames.length;
+				setTimeout(displayTrainsByStation, 10000);
+			};
+			displayTrainsByStation();
+		})
+	
+		.catch(error => {
+			console.error('Error fetching API data:', error);
+		});
+
+		function getTimeUntilArrival(arrivalTime) {
+			const now = new Date();
+			const arrival = new Date(arrivalTime);
+			const diff = Math.floor((arrival - now) / 1000);
+
+			const minutes = Math.floor(diff / 60);
+			if (minutes <= 0) {
+				return 'Due';
+			} else {
+				return `${minutes} minutes`;
+			}
+		}
+
+	  </script>
+</html>
