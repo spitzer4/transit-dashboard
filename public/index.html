@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="style.css" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="style.css" />
 		<title>CTA Information Dashboard</title>
 		<meta charset="UTF-8" />
 	</head>
@@ -26,9 +26,8 @@
 			<br/>
 			<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Chicago_Transit_Authority_Logo.svg" class="cta-logo"/>
 			<h2>Trains</h2>
-		<!-- </div> -->
-		<!-- <div id="section-container"> -->
-			<table id="train-table">
+			<div id="station-container"></div>
+			<!-- <table id="train-table">
 				<thead>
 				<tr>
 					<th>Station</th>
@@ -37,7 +36,7 @@
 				</tr>
 				</thead>
 				<tbody id="train-list"></tbody>
-			</table>
+			</table> -->
 			<br/>
 		</div>
 	</body>
@@ -62,8 +61,8 @@
 		fetch('/api')
 		  .then(response => response.json())
 		  .then(data => {
-			const dataContainer = document.getElementById('train-list');
 			const trainsByStation = {};
+			const stationContainer = document.getElementById('station-container');
 
 			if (!data || !Array.isArray(data)) {
 				console.error('Invalid data received from server:', data);
@@ -81,63 +80,76 @@
 					const route = eta.rt;
 					const arrT = eta.arrT;
 
-					const key = `${destName}_${route}`;
+					const key = `${route}_${destName}`;
 
-					if (!trainsByStation[key]) {
-						trainsByStation[key] = [];
+					if (!trainsByStation[staName]) {
+						trainsByStation[staName] = [];
 					}
 					
-					trainsByStation[key].push({ staName, destName, arrT, route })
+					trainsByStation[staName].push({ staName, destName, arrT, route });
+					
 				});
 			});
 
-			let currentIndex = 0;
-			const displayLimit = 5;
-			const displayNextTrains = () => {
-				const keys = Object.keys(trainsByStation);
-				const endIndex = currentIndex + displayLimit;
-				const trainsToShow = keys.slice(currentIndex, endIndex).map(key => trainsByStation[key]).flat().slice(0, displayLimit);
+			const stationNames = Object.keys(trainsByStation);
+			let currentStationIndex = 0;
 
-				if (trainsToShow.length === 0) {
-					currentIndex = 0;
-				}
+			const displayTrainsByStation = () => {
+				const stationName = stationNames[currentStationIndex];
+				const stationTrains = trainsByStation[stationName];
 
-				const existingRows = Array.from(dataContainer.children);
-				const rowsToRemove = existingRows.filter(row => !trainsToShow.includes(row.train));
+				const stationWrapper = document.createElement('div');
+				stationWrapper.classList.add('station-wrapper');
 
-				rowsToRemove.forEach(row => {
-					row.classList.add('fade-out');
-					// setTimeout(() => {
-					// 	dataContainer.removeChild(row);
-					// }, 500);
+				const stationHeader = document.createElement('h3');
+				stationHeader.textContent = stationName;
+
+				const stationTable = document.createElement('table');
+				stationTable.classList.add('train-table');
+
+				const tableHead = document.createElement('thead');
+				const tableHeadRow = document.createElement('tr');
+				const tableHeadStation = document.createElement('th');
+				tableHeadStation.textContent = 'Station';
+				const tableHeadDestination = document.createElement('th');
+				tableHeadDestination.textContent = 'Destination';
+				const tableHeadArrival = document.createElement('th');
+				tableHeadArrival.textContent = 'Arrival Time';
+
+				tableHeadRow.appendChild(tableHeadStation);
+				tableHeadRow.appendChild(tableHeadDestination);
+				tableHeadRow.appendChild(tableHeadArrival);
+				tableHead.appendChild(tableHeadRow);
+
+				const tableBody = document.createElement('tbody');
+
+				stationTrains.forEach(train => {
+					const tableRow = document.createElement('tr');
+					const stationCell = document.createElement('td');
+					stationCell.textContent = train.staName;
+					const destinationCell = document.createElement('td');
+					destinationCell.textContent = train.destName;
+					const arrivalCell = document.createElement('td');
+					arrivalCell.textContent = getTimeUntilArrival(train.arrT);
+
+					tableRow.appendChild(stationCell);
+					tableRow.appendChild(destinationCell);
+					tableRow.appendChild(arrivalCell);
+					tableRow.classList.add(`route-${train.route}`);
+					tableBody.appendChild(tableRow);
 				});
 
-				dataContainer.innerHTML = '';
+				stationTable.appendChild(tableHead);
+				stationTable.appendChild(tableBody);
+				stationWrapper.appendChild(stationHeader);
+				stationWrapper.appendChild(stationTable);
+				stationContainer.innerHTML = '';
+				stationContainer.appendChild(stationWrapper);
 
-				trainsToShow.forEach(train => {
-					if (!existingRows.some(row => row.train === train)) {
-						const row = document.createElement('tr');
-						const routeCell = document.createElement('td');
-						const destCell = document.createElement('td');
-						const arrTCell = document.createElement('td');
-
-						routeCell.textContent = train.staName;
-						destCell.textContent = train.destName;
-						arrTCell.textContent = getTimeUntilArrival(train.arrT);
-
-						row.classList.add(`route-${train.route}`, `fade-in`);
-
-						row.appendChild(routeCell);
-						row.appendChild(destCell);
-						row.appendChild(arrTCell);
-
-						dataContainer.appendChild(row);
-					}
-				});
-				currentIndex = (currentIndex + displayLimit) % keys.length;
-				setTimeout(displayNextTrains, 10000);
+				currentStationIndex = (currentStationIndex + 1) % stationNames.length;
+				setTimeout(displayTrainsByStation, 10000);
 			};
-			displayNextTrains();
+			displayTrainsByStation();
 		})
 	
 		.catch(error => {
