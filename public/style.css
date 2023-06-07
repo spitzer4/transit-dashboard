@@ -132,15 +132,11 @@ th, td {
 }
 
 .weather-img {
-	height: 100px;
-	width: 100px;
+	height: 200px;
+	width: 200px;
 	float: left;
 	padding-left: 10px;
 	padding-right: 10px;
-}
-
-.text {
-	font-size: 20px;
 }
 
 .weather-section {
@@ -150,3 +146,21 @@ th, td {
 .train-section {
 	background-color: black;
 }
+
+.temp {
+	font-size: 50px;
+}
+
+.desc {
+	font-size: 30px;
+}
+
+.weather-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.weather-text p {
+	margin-top: 0px;
+  }
+
