@@ -76,7 +76,7 @@ Make sure to adjust the import path if your config.js file is located in a diffe
 
 ## Usage
 
-1. Start the server: `npm start`
+1. Start the server: `node main.js`
 2. Open a web browser and visit `http://localhost:3000` to access the transit dashboard.
 3. The dashboard will display the train arrivals and weather information in their respective sections.
 
